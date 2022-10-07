@@ -7,7 +7,6 @@ const resolvers = {
         customers: async () => {
             try {
                 const customers = await getCustomers();
-                console.log(customers);
                 return customers;
             }
             catch (error) {
@@ -18,7 +17,6 @@ const resolvers = {
         customer: async (obj, args) => {
             try {
                 const customer = await getCustomer(args.id);
-                console.log({ customer });
                 return customer;
             }
             catch (error) {
@@ -39,7 +37,6 @@ const resolvers = {
         inventory: async (obj, args) => {
             try {
                 const inventory = await getInventory(args.id);
-                console.log({ inventory });
                 return inventory;
             }
             catch (error) {
@@ -50,7 +47,6 @@ const resolvers = {
         invoices: async () => {
             try {
                 const invoices = await getInvoices();
-                console.log(invoices);
                 return invoices;
             }
             catch (error) {
