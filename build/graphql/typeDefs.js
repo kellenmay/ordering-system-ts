@@ -99,9 +99,9 @@ const typeDefs = gql `
   }
 
   input CreateInvoiceItemArgs {
-    invoice: Int
-    lineNumber: Int
-    item: Int
+    invoiceId: ID!
+    lineNumber: Int!
+    itemId: ID
     quantity: Int
     price: Float
   }
@@ -115,6 +115,7 @@ const typeDefs = gql `
   }
 
   type InvoiceItemReturn {
+    invoice: Invoice
     invoiceItem: InvoiceItem
     success: Boolean
   }
@@ -122,16 +123,16 @@ const typeDefs = gql `
   type Mutation {
     createCustomer(args: CreateCustomerArgs!): CustomerReturn
     createInventory(args: CreateInventoryArgs!): InventoryReturn
-    createInvoice(args: CreateInvoiceArgs!): InvoiceReturn
+    createInvoice(args: CreateInvoiceArgs!): InvoiceReturn # this
     createInvoiceItem(args: CreateInvoiceItemArgs!): InvoiceItemReturn
     deleteCustomer(id: ID!): Boolean
-    deleteInvoice(id: ID!): Boolean
+    deleteInvoice(id: ID!): Boolean # this
     deleteInventory(id: ID!): Boolean
-    deleteInvoiceItem(invoiceNumber: Int!, lineNumber: Int!): Boolean
+    deleteInvoiceItem(invoiceNumber: Int!, lineNumber: Int!): Boolean # this
     updateCustomer(args: UpdateCustomerArgs!): CustomerReturn
     updateInventory(args: UpdateInventoryArgs!): InventoryReturn
     updateInvoice(args: UpdateInvoiceArgs!): InvoiceReturn
-    updateInvoiceItem(args: UpdateInvoiceItemArgs!): InvoiceItemReturn
+    updateInvoiceItem(args: UpdateInvoiceItemArgs!): InvoiceItemReturn # this
   }
 `;
 export { typeDefs };

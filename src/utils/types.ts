@@ -1,4 +1,4 @@
-import type { RowDataPacket } from 'mysql2/promise';
+import type { Connection, RowDataPacket } from 'mysql2/promise';
 
 export interface CustomerRow extends RowDataPacket {
   id: number;
@@ -20,4 +20,22 @@ export interface InvoiceRow extends RowDataPacket {
   id: number;
   customer_id: string | null;
   date_of_sale: string | null;
+}
+
+export interface Context {
+  connection: Connection;
+}
+
+export interface CreateInvoiceItemArgs {
+  invoiceId: string;
+  lineNumber: number;
+  itemId?: string | null;
+  quantity?: number | null;
+  price?: number | null;
+}
+
+export interface UpdateInvoiceArgs {
+  id: string;
+  customerId?: string | null;
+  dateOfSale?: string | null;
 }

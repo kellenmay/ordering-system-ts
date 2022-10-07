@@ -9,7 +9,7 @@ const server = new ApolloServer({
     cache: 'bounded',
     context: () => {
         return {
-            db: connection,
+            connection: connection,
         };
     },
     plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
