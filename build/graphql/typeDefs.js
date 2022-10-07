@@ -128,7 +128,7 @@ const typeDefs = gql `
     deleteCustomer(id: ID!): Boolean
     deleteInvoice(id: ID!): Boolean # this
     deleteInventory(id: ID!): Boolean
-    deleteInvoiceItem(invoiceNumber: Int!, lineNumber: Int!): Boolean # this
+    deleteInvoiceItem(invoiceId: ID!, lineNumber: Int!): Boolean # this
     updateCustomer(args: UpdateCustomerArgs!): CustomerReturn
     updateInventory(args: UpdateInventoryArgs!): InventoryReturn
     updateInvoice(args: UpdateInvoiceArgs!): InvoiceReturn

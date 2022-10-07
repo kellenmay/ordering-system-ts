@@ -39,3 +39,8 @@ export interface UpdateInvoiceArgs {
   customerId?: string | null;
   dateOfSale?: string | null;
 }
+
+export interface DeleteInvoiceItemArgs {
+  invoiceId: string;
+  lineNumber: number;
+}

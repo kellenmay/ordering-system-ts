@@ -1,5 +1,5 @@
 import { getCustomer, getCustomers, getInventories, getInventory, getInvoices, } from '../utils';
-import { createInvoiceItem, updateInvoice } from '../handlers';
+import { createInvoiceItem, deleteInvoiceItem, updateInvoice, } from '../handlers';
 import { InvoiceRepo } from '../repos';
 import { Invoice } from './types';
 const resolvers = {
@@ -89,6 +89,16 @@ const resolvers = {
                     invoiceItem: null,
                     success: false,
                 };
+            }
+        },
+        deleteInvoiceItem: async (obj, args) => {
+            try {
+                await deleteInvoiceItem(args);
+                return true;
+            }
+            catch (err) {
+                console.error(err);
+                return false;
             }
         },
         updateInvoice: async (obj, { args }) => {

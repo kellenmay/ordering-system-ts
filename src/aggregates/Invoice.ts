@@ -37,6 +37,30 @@ export class Invoice {
     });
   }
 
+  public deleteInvoiceItem(lineNumber: number): void {
+    this._invoiceItems = this._invoiceItems.filter(
+      (invoiceItem) => invoiceItem.lineNumber !== lineNumber.toString(),
+    );
+  }
+
+  public updateInvoiceItem(args: {
+    lineNumber: number;
+    itemId?: string | null | undefined;
+    quantity?: number | null | undefined;
+    price?: number | null | undefined;
+  }): void {
+    const invoiceItem = this._invoiceItems.find(
+      (invoiceItem) => invoiceItem.lineNumber === args.lineNumber?.toString(),
+    );
+    if (!invoiceItem) {
+      throw new Error('No invoice item exists with this line number');
+    }
+    invoiceItem.lineNumber = args.lineNumber.toString();
+    invoiceItem.itemId = args.itemId ?? null;
+    invoiceItem.quantity = args.quantity ?? null;
+    invoiceItem.price = args.price ?? null;
+  }
+
   // public createInvoice(args:{
 
   // }),: void {

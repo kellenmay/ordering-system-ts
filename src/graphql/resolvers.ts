@@ -9,11 +9,16 @@ import {
   InvoiceRow,
 } from '../utils';
 
-import { createInvoiceItem, updateInvoice } from '../handlers';
+import {
+  createInvoiceItem,
+  deleteInvoiceItem,
+  updateInvoice,
+} from '../handlers';
 import { InvoiceRepo } from '../repos';
 import type {
   Context,
   CreateInvoiceItemArgs,
+  DeleteInvoiceItemArgs,
   UpdateInvoiceArgs,
 } from '../utils';
 import { Invoice, InvoiceItem } from './types';
@@ -112,6 +117,18 @@ const resolvers = {
           invoiceItem: null,
           success: false,
         };
+      }
+    },
+    deleteInvoiceItem: async (
+      obj: any,
+      args: DeleteInvoiceItemArgs,
+    ): Promise<boolean> => {
+      try {
+        await deleteInvoiceItem(args);
+        return true;
+      } catch (err) {
+        console.error(err);
+        return false;
       }
     },
     updateInvoice: async (
