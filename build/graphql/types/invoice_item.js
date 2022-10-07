@@ -3,14 +3,14 @@ export class InvoiceItem {
     _invoice_number;
     _line_number;
     _item_id;
-    // private _quantity: string | null;
-    // private _price: string | null;
+    _quantity;
+    _price;
     constructor(args) {
         this._invoice_number = args.invoiceNumber;
         this._line_number = args.lineNumber;
         this._item_id = args.itemId;
-        // this._quantity = args.quantity;
-        // this._price = args.price.toString();
+        this._quantity = args.quantity;
+        this._price = args.price.toString();
     }
     get id() {
         return `"Invoice Number" + ${this._invoice_number}|"Line number" + ${this._line_number}`;

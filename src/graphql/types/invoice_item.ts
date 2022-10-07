@@ -5,23 +5,25 @@ export class InvoiceItem {
   private _invoice_number: string;
   private _line_number: string | null;
   private _item_id: string | null;
-  // private _quantity: string | null;
-  // private _price: string | null;
+  private _quantity: string | null;
+  private _price: string | null;
 
   constructor(args: InvoiceItemDTO) {
     this._invoice_number = args.invoiceNumber;
     this._line_number = args.lineNumber;
     this._item_id = args.itemId;
-    // this._quantity = args.quantity;
-    // this._price = args.price.toString();
+    this._quantity = args.quantity;
+    this._price = args.price.toString();
   }
 
   public get id() {
     return `"Invoice Number" + ${this._invoice_number}|"Line number" + ${this._line_number}`;
   }
+
   public get lineNumber() {
     return this._line_number;
   }
+
   public async invoice(args: unknown, context: Context): Promise<any> {
     try {
       if (this._invoice_number) {
@@ -52,6 +54,7 @@ export class InvoiceItem {
   public get quantity() {
     return this._quantity;
   }
+
   public get price() {
     return this._price;
   }

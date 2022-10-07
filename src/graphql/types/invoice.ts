@@ -23,7 +23,6 @@ export class Invoice {
         const customer = await getCustomer(this._customerId);
         return customer; // REFACTOR TO RETURN CUSTOMER CLASS
       }
-
       return null;
     } catch (err) {
       console.error(err);
