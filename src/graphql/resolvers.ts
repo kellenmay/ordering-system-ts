@@ -13,6 +13,7 @@ import {
   createInvoiceItem,
   deleteInvoiceItem,
   updateInvoice,
+  updateInvoiceItem,
 } from '../handlers';
 import { InvoiceRepo } from '../repos';
 import type {
@@ -20,6 +21,7 @@ import type {
   CreateInvoiceItemArgs,
   DeleteInvoiceItemArgs,
   UpdateInvoiceArgs,
+  UpdateInvoiceItemArgs,
 } from '../utils';
 import { Invoice, InvoiceItem } from './types';
 
@@ -28,7 +30,6 @@ const resolvers = {
     customers: async (): Promise<CustomerRow[]> => {
       try {
         const customers = await getCustomers();
-        console.log(customers);
         return customers;
       } catch (error) {
         console.error(error);
@@ -41,7 +42,6 @@ const resolvers = {
     ): Promise<CustomerRow | null> => {
       try {
         const customer = await getCustomer(args.id);
-        console.log({ customer });
         return customer;
       } catch (error) {
         console.error(error);
@@ -63,7 +63,6 @@ const resolvers = {
     ): Promise<InventoryRow | null> => {
       try {
         const inventory = await getInventory(args.id);
-        console.log({ inventory });
         return inventory;
       } catch (error) {
         console.error(error);
@@ -73,7 +72,6 @@ const resolvers = {
     invoices: async (): Promise<InvoiceRow[]> => {
       try {
         const invoices = await getInvoices();
-        console.log(invoices);
         return invoices;
       } catch (error) {
         console.error(error);
@@ -119,11 +117,34 @@ const resolvers = {
         };
       }
     },
+    updateInvoiceItem: async (
+      obj: any,
+      { args }: { args: UpdateInvoiceItemArgs },
+    ): Promise<InvoiceItemReturn> => {
+      try {
+        const invoiceItem = await updateInvoiceItem(args);
+
+        return {
+          invoiceItem: {
+            id: `"Invoice Number" + ${invoiceItem.invoiceNumber}|"Line number" + ${invoiceItem.lineNumber}`,
+            ...invoiceItem,
+          },
+          success: true,
+        };
+      } catch (err) {
+        console.error(err);
+        return {
+          invoiceItem: null,
+          success: false,
+        };
+      }
+    },
     deleteInvoiceItem: async (
       obj: any,
       args: DeleteInvoiceItemArgs,
     ): Promise<boolean> => {
       try {
+        updateInvoiceItem;
         await deleteInvoiceItem(args);
         return true;
       } catch (err) {

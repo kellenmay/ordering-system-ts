@@ -17,7 +17,6 @@ export async function getInventory(id) {
 }
 export async function getInvoices() {
     const [rows] = await connection.query(`SELECT * FROM invoice`);
-    console.log([rows]);
     return rows ?? null;
 }
 export async function getInvoice(id) {

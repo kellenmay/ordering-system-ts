@@ -7,7 +7,6 @@ export async function deleteInvoiceItem(
 ): Promise<Boolean> {
   try {
     await connection.beginTransaction();
-    console.log(args);
 
     const repo = new InvoiceRepo(connection);
     const invoice = await repo.get(args.invoiceId);

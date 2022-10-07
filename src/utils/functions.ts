@@ -2,9 +2,7 @@ import { connection } from '../database';
 import type { CustomerRow, InventoryRow, InvoiceRow } from './index';
 
 export async function getCustomers(): Promise<CustomerRow[]> {
-  const [row] = await connection.query<CustomerRow[]>(
-    `SELECT * FROM customer`,
-  );
+  const [row] = await connection.query<CustomerRow[]>(`SELECT * FROM customer`);
   return row ?? null;
 }
 
@@ -30,10 +28,7 @@ export async function getInventory(id: string): Promise<InventoryRow | null> {
 }
 
 export async function getInvoices(): Promise<InvoiceRow[]> {
-  const [rows] = await connection.query<InvoiceRow[]>(
-    `SELECT * FROM invoice`,
-  );
-  console.log([rows])
+  const [rows] = await connection.query<InvoiceRow[]>(`SELECT * FROM invoice`);
   return rows ?? null;
 }
 

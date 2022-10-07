@@ -1,5 +1,5 @@
 import { getCustomer, getCustomers, getInventories, getInventory, getInvoices, } from '../utils';
-import { createInvoiceItem, deleteInvoiceItem, updateInvoice, } from '../handlers';
+import { createInvoiceItem, deleteInvoiceItem, updateInvoice, updateInvoiceItem, } from '../handlers';
 import { InvoiceRepo } from '../repos';
 import { Invoice } from './types';
 const resolvers = {
@@ -91,8 +91,28 @@ const resolvers = {
                 };
             }
         },
+        updateInvoiceItem: async (obj, { args }) => {
+            try {
+                const invoiceItem = await updateInvoiceItem(args);
+                return {
+                    invoiceItem: {
+                        id: `"Invoice Number" + ${invoiceItem.invoiceNumber}|"Line number" + ${invoiceItem.lineNumber}`,
+                        ...invoiceItem,
+                    },
+                    success: true,
+                };
+            }
+            catch (err) {
+                console.error(err);
+                return {
+                    invoiceItem: null,
+                    success: false,
+                };
+            }
+        },
         deleteInvoiceItem: async (obj, args) => {
             try {
+                updateInvoiceItem;
                 await deleteInvoiceItem(args);
                 return true;
             }

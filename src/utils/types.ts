@@ -34,6 +34,14 @@ export interface CreateInvoiceItemArgs {
   price?: number | null;
 }
 
+export interface UpdateInvoiceItemArgs {
+  invoiceId: string;
+  lineNumber: number;
+  itemId?: string | null;
+  quantity?: number | null;
+  price?: number | null;
+}
+
 export interface UpdateInvoiceArgs {
   id: string;
   customerId?: string | null;

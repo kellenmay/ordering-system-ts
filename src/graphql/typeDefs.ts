@@ -108,9 +108,9 @@ const typeDefs = gql`
   }
 
   input UpdateInvoiceItemArgs {
-    invoice: Int
-    lineNumber: Int
-    item: Int
+    invoiceId: ID!
+    lineNumber: Int!
+    itemId: Int
     quantity: Int
     price: Float
   }

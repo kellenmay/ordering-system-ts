@@ -3,7 +3,6 @@ import { InvoiceRepo } from '../repos';
 export async function deleteInvoiceItem(args) {
     try {
         await connection.beginTransaction();
-        console.log(args);
         const repo = new InvoiceRepo(connection);
         const invoice = await repo.get(args.invoiceId);
         invoice.deleteInvoiceItem(args.lineNumber);
