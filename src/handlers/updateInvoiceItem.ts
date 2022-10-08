@@ -13,9 +13,9 @@ export async function updateInvoiceItem(
 
     invoice.updateInvoiceItem({
       lineNumber: args.lineNumber,
-      itemId: args.itemId ?? null,
-      quantity: args.quantity ?? null,
-      price: args.price ?? null,
+      itemId: args.itemId,
+      quantity: args.quantity,
+      price: args.price,
     });
 
     await repo.save(invoice);
@@ -24,17 +24,17 @@ export async function updateInvoiceItem(
 
     const updatedInvoice = invoice.getState();
 
-    const newLine = updatedInvoice.invoiceItems.find(
+    const updatedLine = updatedInvoice.invoiceItems.find(
       (item) => item.lineNumber === args.lineNumber.toString(),
     );
 
-    if (!newLine) {
+    if (!updatedLine) {
       throw new Error('No new line updated');
     }
 
     await connection.release();
 
-    return newLine;
+    return updatedLine;
   } catch (err: unknown) {
     await connection.rollback();
     await connection.destroy();

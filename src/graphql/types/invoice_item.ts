@@ -1,53 +1,61 @@
 import type { InvoiceItemDTO } from '../../repos';
+import { InventoryRepo, InvoiceRepo } from '../../repos';
 import type { Context } from '../../utils';
-import { getInvoice } from '../../utils';
+import { Inventory } from './inventory';
+import { Invoice } from './invoice';
 export class InvoiceItem {
-  private _invoice_number: string;
-  private _line_number: string | null;
-  private _item_id: string | null;
-  private _quantity: string | null;
-  private _price: string | null;
+  private _invoiceNumber: string;
+  private _lineNumber: string | null;
+  private _itemId: string | null;
+  private _quantity: number | null;
+  private _price: number | null;
 
   constructor(args: InvoiceItemDTO) {
-    this._invoice_number = args.invoiceNumber;
-    this._line_number = args.lineNumber;
-    this._item_id = args.itemId;
+    this._invoiceNumber = args.invoiceNumber;
+    this._lineNumber = args.lineNumber;
+    this._itemId = args.itemId;
     this._quantity = args.quantity;
-    this._price = args.price.toString();
+    this._price = args.price;
   }
 
   public get id() {
-    return `"Invoice Number" + ${this._invoice_number}|"Line number" + ${this._line_number}`;
+    return `"Invoice Number" + ${this._invoiceNumber}|"Line number" + ${this._lineNumber}`;
   }
 
   public get lineNumber() {
-    return this._line_number;
+    return this._lineNumber;
   }
 
-  public async invoice(args: unknown, context: Context): Promise<any> {
+  public async invoice(
+    args: unknown,
+    context: Context,
+  ): Promise<Invoice | null> {
     try {
-      if (this._invoice_number) {
-        const invoice = await getInvoice(this._invoice_number);
-        return invoice; // REFACTOR TO RETURN CUSTOMER CLASS
-      }
-
-      return null;
+      const repo = new InvoiceRepo(context.connection);
+      const invoice = await repo.get(this._invoiceNumber);
+      const dto = invoice.getState();
+      return new Invoice(dto);
     } catch (err) {
       console.error(err);
       return null;
     }
   }
 
-  public async item(args: unknown, context: Context): Promise<any[]> {
+  public async item(
+    args: unknown,
+    context: Context,
+  ): Promise<Inventory | null> {
     try {
-      const invoiceItems = await context.connection.query<any[]>(
-        `SELECT * FROM inventory WHERE inventory.item_number = ${this._item_id}`,
-      );
-      // console.log('the invoice item', invoiceItems);
-      return invoiceItems;
+      if (this._itemId) {
+        const repo = new InventoryRepo(context.connection);
+        const inventory = await repo.get(this._itemId);
+        const dto = inventory.getState();
+        return new Inventory(dto);
+      }
+      return null;
     } catch (err) {
       console.error(err);
-      return [];
+      return null;
     }
   }
 

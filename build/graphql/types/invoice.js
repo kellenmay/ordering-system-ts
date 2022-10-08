@@ -1,4 +1,5 @@
-import { getCustomer } from '../../utils';
+import { CustomerRepo } from '../../repos';
+import { Customer } from './customer';
 export class Invoice {
     _id;
     _customerId;
@@ -14,8 +15,10 @@ export class Invoice {
     async customer(args, context) {
         try {
             if (this._customerId) {
-                const customer = await getCustomer(this._customerId);
-                return customer; // REFACTOR TO RETURN CUSTOMER CLASS
+                const repo = new CustomerRepo(context.connection);
+                const customer = await repo.get(this._customerId);
+                const dto = customer.getState();
+                return new Customer(dto);
             }
             return null;
         }

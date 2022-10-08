@@ -52,13 +52,24 @@ export class Invoice {
     const invoiceItem = this._invoiceItems.find(
       (invoiceItem) => invoiceItem.lineNumber === args.lineNumber?.toString(),
     );
+
     if (!invoiceItem) {
       throw new Error('No invoice item exists with this line number');
     }
+
     invoiceItem.lineNumber = args.lineNumber.toString();
-    invoiceItem.itemId = args.itemId ?? null;
-    invoiceItem.quantity = args.quantity ?? null;
-    invoiceItem.price = args.price ?? null;
+
+    if (args.itemId !== undefined) {
+      invoiceItem.itemId = args.itemId;
+    }
+
+    if (args.quantity !== undefined) {
+      invoiceItem.quantity = args.quantity;
+    }
+
+    if (args.price !== undefined) {
+      invoiceItem.price = args.price;
+    }
   }
 
   // public createInvoice(args:{

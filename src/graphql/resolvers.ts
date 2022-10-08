@@ -103,10 +103,7 @@ const resolvers = {
         const invoiceItem = await createInvoiceItem(args);
 
         return {
-          invoiceItem: {
-            id: `"Invoice Number" + ${invoiceItem.invoiceNumber}|"Line number" + ${invoiceItem.lineNumber}`,
-            ...invoiceItem,
-          },
+          invoiceItem: new InvoiceItem(invoiceItem),
           success: true,
         };
       } catch (err) {
@@ -123,12 +120,8 @@ const resolvers = {
     ): Promise<InvoiceItemReturn> => {
       try {
         const invoiceItem = await updateInvoiceItem(args);
-
         return {
-          invoiceItem: {
-            id: `"Invoice Number" + ${invoiceItem.invoiceNumber}|"Line number" + ${invoiceItem.lineNumber}`,
-            ...invoiceItem,
-          },
+          invoiceItem: new InvoiceItem(invoiceItem),
           success: true,
         };
       } catch (err) {

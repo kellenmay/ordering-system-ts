@@ -97,13 +97,13 @@ export class InvoiceRepo {
   }
 }
 
-interface InvoiceRow extends RowDataPacket {
+export interface InvoiceRow extends RowDataPacket {
   id: number;
   customer_id: number | null;
   date_of_sale: string | null;
 }
 
-interface InvoiceItemRow extends RowDataPacket {
+export interface InvoiceItemRow extends RowDataPacket {
   invoice_number: number;
   line_number: number;
   item_id: number | null;

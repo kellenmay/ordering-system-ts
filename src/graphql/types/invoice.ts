@@ -1,6 +1,7 @@
 import type { InvoiceDTO } from '../../repos';
+import { CustomerRepo } from '../../repos';
 import type { Context } from '../../utils';
-import { getCustomer } from '../../utils';
+import { Customer } from './customer';
 
 export class Invoice {
   private _id: string;
@@ -17,11 +18,16 @@ export class Invoice {
     return this._id;
   }
 
-  public async customer(args: unknown, context: Context): Promise<any> {
+  public async customer(
+    args: unknown,
+    context: Context,
+  ): Promise<Customer | null> {
     try {
       if (this._customerId) {
-        const customer = await getCustomer(this._customerId);
-        return customer; // REFACTOR TO RETURN CUSTOMER CLASS
+        const repo = new CustomerRepo(context.connection);
+        const customer = await repo.get(this._customerId);
+        const dto = customer.getState();
+        return new Customer(dto);
       }
       return null;
     } catch (err) {

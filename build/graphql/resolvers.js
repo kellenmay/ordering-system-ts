@@ -1,7 +1,7 @@
 import { getCustomer, getCustomers, getInventories, getInventory, getInvoices, } from '../utils';
 import { createInvoiceItem, deleteInvoiceItem, updateInvoice, updateInvoiceItem, } from '../handlers';
 import { InvoiceRepo } from '../repos';
-import { Invoice } from './types';
+import { Invoice, InvoiceItem } from './types';
 const resolvers = {
     Query: {
         customers: async () => {
@@ -72,10 +72,7 @@ const resolvers = {
             try {
                 const invoiceItem = await createInvoiceItem(args);
                 return {
-                    invoiceItem: {
-                        id: `"Invoice Number" + ${invoiceItem.invoiceNumber}|"Line number" + ${invoiceItem.lineNumber}`,
-                        ...invoiceItem,
-                    },
+                    invoiceItem: new InvoiceItem(invoiceItem),
                     success: true,
                 };
             }
@@ -91,10 +88,7 @@ const resolvers = {
             try {
                 const invoiceItem = await updateInvoiceItem(args);
                 return {
-                    invoiceItem: {
-                        id: `"Invoice Number" + ${invoiceItem.invoiceNumber}|"Line number" + ${invoiceItem.lineNumber}`,
-                        ...invoiceItem,
-                    },
+                    invoiceItem: new InvoiceItem(invoiceItem),
                     success: true,
                 };
             }

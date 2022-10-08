@@ -1,30 +1,31 @@
-import { getInvoice } from '../../utils';
+import { InventoryRepo, InvoiceRepo } from '../../repos';
+import { Inventory } from './inventory';
+import { Invoice } from './invoice';
 export class InvoiceItem {
-    _invoice_number;
-    _line_number;
-    _item_id;
+    _invoiceNumber;
+    _lineNumber;
+    _itemId;
     _quantity;
     _price;
     constructor(args) {
-        this._invoice_number = args.invoiceNumber;
-        this._line_number = args.lineNumber;
-        this._item_id = args.itemId;
+        this._invoiceNumber = args.invoiceNumber;
+        this._lineNumber = args.lineNumber;
+        this._itemId = args.itemId;
         this._quantity = args.quantity;
-        this._price = args.price.toString();
+        this._price = args.price;
     }
     get id() {
-        return `"Invoice Number" + ${this._invoice_number}|"Line number" + ${this._line_number}`;
+        return `"Invoice Number" + ${this._invoiceNumber}|"Line number" + ${this._lineNumber}`;
     }
     get lineNumber() {
-        return this._line_number;
+        return this._lineNumber;
     }
     async invoice(args, context) {
         try {
-            if (this._invoice_number) {
-                const invoice = await getInvoice(this._invoice_number);
-                return invoice; // REFACTOR TO RETURN CUSTOMER CLASS
-            }
-            return null;
+            const repo = new InvoiceRepo(context.connection);
+            const invoice = await repo.get(this._invoiceNumber);
+            const dto = invoice.getState();
+            return new Invoice(dto);
         }
         catch (err) {
             console.error(err);
@@ -33,13 +34,17 @@ export class InvoiceItem {
     }
     async item(args, context) {
         try {
-            const invoiceItems = await context.connection.query(`SELECT * FROM inventory WHERE inventory.item_number = ${this._item_id}`);
-            // console.log('the invoice item', invoiceItems);
-            return invoiceItems;
+            if (this._itemId) {
+                const repo = new InventoryRepo(context.connection);
+                const inventory = await repo.get(this._itemId);
+                const dto = inventory.getState();
+                return new Inventory(dto);
+            }
+            return null;
         }
         catch (err) {
             console.error(err);
-            return [];
+            return null;
         }
     }
     get quantity() {
