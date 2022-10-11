@@ -20,4 +20,16 @@ export class InventoryRepo {
         };
         return new Inventory(dto);
     }
+    async save(inventory) {
+        const dto = inventory.getState();
+        let stmt = format(`
+      INSERT INTO inventory (id, item_number, make, msrp, item_description) VALUES (?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        item_number = VALUES(item_number),
+        make = VALUES(make),
+        msrp = VALUES(msrp),
+        item_description = VALUES(item_description);
+    `, [dto.id, dto.itemNumber, dto.make, dto.msrp, dto.itemDescription]);
+        await this._connection.query(stmt);
+    }
 }

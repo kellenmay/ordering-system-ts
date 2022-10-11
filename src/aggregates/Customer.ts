@@ -24,4 +24,41 @@ export class Customer {
       phoneNumber: this._phoneNumber,
     };
   }
+
+  public createCustomer(args: {
+    name: string;
+    email: string;
+    address: string;
+    phoneNumber: string;
+  }): void {
+    this._name = args.name;
+    this._email = args.email;
+    this._address = args.address;
+    this._phoneNumber = args.phoneNumber;
+  }
+
+  public updateCustomer(args: {
+    name?: string | null;
+    email?: string | null;
+    address?: string | null;
+    phoneNumber?: string | null;
+  }): void {
+    {
+      if (args.name !== undefined) {
+        this._name = args.name;
+      }
+
+      if (args.email !== undefined) {
+        this._email = args.email;
+      }
+
+      if (args.address !== undefined) {
+        this._address = args.address;
+      }
+
+      if (args.phoneNumber !== undefined) {
+        this._phoneNumber = args.phoneNumber;
+      }
+    }
+  }
 }

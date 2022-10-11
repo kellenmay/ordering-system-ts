@@ -1,4 +1,4 @@
-import { Connection, format, RowDataPacket } from 'mysql2/promise';
+import { Connection, format, OkPacket, RowDataPacket } from 'mysql2/promise';
 import { Customer } from '../aggregates';
 
 export class CustomerRepo {
@@ -28,54 +28,36 @@ export class CustomerRepo {
     return new Customer(dto);
   }
 
-  // public async save(invoice: Invoice): Promise<void> {
-  //   const dto = invoice.getState();
+  public async save(customer: Customer): Promise<void> {
+    const dto = customer.getState();
 
-  //   let stmt = format(
-  //     `
-  //     SET @invoiceId = ?;
+    let stmt = format(
+      `
+      INSERT INTO customer (id, name, email, address, phone_number) VALUES (?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        name = VALUES(name),
+        email = VALUES(email),
+        address = VALUES(address),
+        phone_number = VALUES(phone_number);
+    `,
+      [dto.id, dto.name, dto.email, dto.address, dto.phoneNumber],
+    );
 
-  //     DELETE FROM invoice_item WHERE invoice_item.invoice_number = @invoiceId;
+    await this._connection.query(stmt);
+  }
 
-  //     INSERT INTO invoice (id, customer_id, date_of_sale) VALUES (@invoiceId, ?, ?)
-  //     ON DUPLICATE KEY UPDATE
-  //       customer_id = VALUES(customer_id),
-  //       date_of_sale = VALUES(date_of_sale);
-  //   `,
-  //     [
-  //       dto.id,
-  //       dto.customerId,
-  //       dto.dateOfSale ? formatISO9075(new Date(dto.dateOfSale)) : null,
-  //     ],
-  //   );
+  public async getCustomerId(): Promise<string> {
+    const [res] = await this._connection.query<OkPacket>(
+      `INSERT INTO customer (name, email, address, phone_number) VALUES (NULL, NULL, NULL, NULL);`,
+    );
+    const insertId = res.insertId;
+    console.log({ insertId });
+    return insertId.toString();
+  }
 
-  //   await this._connection.query(stmt);
-
-  //   if (dto.invoiceItems.length > 0) {
-  //     stmt = format(
-  //       `
-  //       INSERT INTO invoice_item (
-  //         invoice_number,
-  //         line_number,
-  //         item_id,
-  //         quantity,
-  //         price
-  //       ) VALUES ?;
-  //     `,
-  //       [
-  //         dto.invoiceItems.map((item) => [
-  //           item.invoiceNumber,
-  //           item.lineNumber,
-  //           item.itemId,
-  //           item.quantity,
-  //           item.price,
-  //         ]),
-  //       ],
-  //     );
-
-  //     await this._connection.query(stmt);
-  //   }
-  // }
+  public async deleteCustomer(id: string): Promise<void> {
+    await this._connection.query(`DELETE FROM customer WHERE id = ?;`, [id]);
+  }
 }
 
 export interface CustomerDTO {

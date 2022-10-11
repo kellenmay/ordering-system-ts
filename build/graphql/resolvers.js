@@ -1,7 +1,7 @@
 import { getCustomer, getCustomers, getInventories, getInventory, getInvoices, } from '../utils';
-import { createInvoiceItem, deleteInvoiceItem, updateInvoice, updateInvoiceItem, } from '../handlers';
+import { createCustomer, createInvoiceItem, deleteCustomer, deleteInvoiceItem, updateCustomer, updateInventory, updateInvoice, updateInvoiceItem, } from '../handlers';
 import { InvoiceRepo } from '../repos';
-import { Invoice, InvoiceItem } from './types';
+import { Customer, Inventory, Invoice, InvoiceItem } from './types';
 const resolvers = {
     Query: {
         customers: async () => {
@@ -68,6 +68,32 @@ const resolvers = {
         },
     },
     Mutation: {
+        createCustomer: async (obj, { args }) => {
+            try {
+                const customer = await createCustomer(args);
+                return {
+                    customer: new Customer(customer),
+                    success: true,
+                };
+            }
+            catch (err) {
+                console.error(err);
+                return {
+                    customer: null,
+                    success: false,
+                };
+            }
+        },
+        deleteCustomer: async (obj, args) => {
+            try {
+                await deleteCustomer(args.id);
+                return true;
+            }
+            catch (err) {
+                console.error(err);
+                return false;
+            }
+        },
         createInvoiceItem: async (obj, { args }) => {
             try {
                 const invoiceItem = await createInvoiceItem(args);
@@ -96,6 +122,38 @@ const resolvers = {
                 console.error(err);
                 return {
                     invoiceItem: null,
+                    success: false,
+                };
+            }
+        },
+        updateCustomer: async (obj, { args }) => {
+            try {
+                const customer = await updateCustomer(args);
+                return {
+                    customer: new Customer(customer),
+                    success: true,
+                };
+            }
+            catch (err) {
+                console.error(err);
+                return {
+                    customer: null,
+                    success: false,
+                };
+            }
+        },
+        updateInventory: async (obj, { args }) => {
+            try {
+                const inventory = await updateInventory(args);
+                return {
+                    inventory: new Inventory(inventory),
+                    success: true,
+                };
+            }
+            catch (err) {
+                console.error(err);
+                return {
+                    inventory: null,
                     success: false,
                 };
             }

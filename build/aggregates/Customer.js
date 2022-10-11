@@ -20,4 +20,26 @@ export class Customer {
             phoneNumber: this._phoneNumber,
         };
     }
+    createCustomer(args) {
+        this._name = args.name;
+        this._email = args.email;
+        this._address = args.address;
+        this._phoneNumber = args.phoneNumber;
+    }
+    updateCustomer(args) {
+        {
+            if (args.name !== undefined) {
+                this._name = args.name;
+            }
+            if (args.email !== undefined) {
+                this._email = args.email;
+            }
+            if (args.address !== undefined) {
+                this._address = args.address;
+            }
+            if (args.phoneNumber !== undefined) {
+                this._phoneNumber = args.phoneNumber;
+            }
+        }
+    }
 }

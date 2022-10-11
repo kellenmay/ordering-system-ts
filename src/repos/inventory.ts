@@ -28,54 +28,23 @@ export class InventoryRepo {
     return new Inventory(dto);
   }
 
-  // public async save(invoice: Invoice): Promise<void> {
-  //   const dto = invoice.getState();
+  public async save(inventory: Inventory): Promise<void> {
+    const dto = inventory.getState();
 
-  //   let stmt = format(
-  //     `
-  //     SET @invoiceId = ?;
+    let stmt = format(
+      `
+      INSERT INTO inventory (id, item_number, make, msrp, item_description) VALUES (?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        item_number = VALUES(item_number),
+        make = VALUES(make),
+        msrp = VALUES(msrp),
+        item_description = VALUES(item_description);
+    `,
+      [dto.id, dto.itemNumber, dto.make, dto.msrp, dto.itemDescription],
+    );
 
-  //     DELETE FROM invoice_item WHERE invoice_item.invoice_number = @invoiceId;
-
-  //     INSERT INTO invoice (id, customer_id, date_of_sale) VALUES (@invoiceId, ?, ?)
-  //     ON DUPLICATE KEY UPDATE
-  //       customer_id = VALUES(customer_id),
-  //       date_of_sale = VALUES(date_of_sale);
-  //   `,
-  //     [
-  //       dto.id,
-  //       dto.customerId,
-  //       dto.dateOfSale ? formatISO9075(new Date(dto.dateOfSale)) : null,
-  //     ],
-  //   );
-
-  //   await this._connection.query(stmt);
-
-  //   if (dto.invoiceItems.length > 0) {
-  //     stmt = format(
-  //       `
-  //       INSERT INTO invoice_item (
-  //         invoice_number,
-  //         line_number,
-  //         item_id,
-  //         quantity,
-  //         price
-  //       ) VALUES ?;
-  //     `,
-  //       [
-  //         dto.invoiceItems.map((item) => [
-  //           item.invoiceNumber,
-  //           item.lineNumber,
-  //           item.itemId,
-  //           item.quantity,
-  //           item.price,
-  //         ]),
-  //       ],
-  //     );
-
-  //     await this._connection.query(stmt);
-  //   }
-  // }
+    await this._connection.query(stmt);
+  }
 }
 
 export interface InventoryDTO {

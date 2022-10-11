@@ -10,20 +10,27 @@ import {
 } from '../utils';
 
 import {
+  createCustomer,
   createInvoiceItem,
+  deleteCustomer,
   deleteInvoiceItem,
+  updateCustomer,
+  updateInventory,
   updateInvoice,
   updateInvoiceItem,
 } from '../handlers';
 import { InvoiceRepo } from '../repos';
 import type {
   Context,
+  CreateCustomerArgs,
   CreateInvoiceItemArgs,
   DeleteInvoiceItemArgs,
+  UpdateCustomerArgs,
+  UpdateInventoryArgs,
   UpdateInvoiceArgs,
   UpdateInvoiceItemArgs,
 } from '../utils';
-import { Invoice, InvoiceItem } from './types';
+import { Customer, Inventory, Invoice, InvoiceItem } from './types';
 
 const resolvers = {
   Query: {
@@ -95,6 +102,37 @@ const resolvers = {
     },
   },
   Mutation: {
+    createCustomer: async (
+      obj: any,
+      { args }: { args: CreateCustomerArgs },
+    ): Promise<CustomerReturn> => {
+      try {
+        const customer = await createCustomer(args);
+
+        return {
+          customer: new Customer(customer),
+          success: true,
+        };
+      } catch (err) {
+        console.error(err);
+        return {
+          customer: null,
+          success: false,
+        };
+      }
+    },
+    deleteCustomer: async (
+      obj: any,
+      args: { id: string },
+    ): Promise<boolean> => {
+      try {
+        await deleteCustomer(args.id);
+        return true;
+      } catch (err) {
+        console.error(err);
+        return false;
+      }
+    },
     createInvoiceItem: async (
       obj: any,
       { args }: { args: CreateInvoiceItemArgs },
@@ -128,6 +166,42 @@ const resolvers = {
         console.error(err);
         return {
           invoiceItem: null,
+          success: false,
+        };
+      }
+    },
+    updateCustomer: async (
+      obj: any,
+      { args }: { args: UpdateCustomerArgs },
+    ): Promise<CustomerReturn> => {
+      try {
+        const customer = await updateCustomer(args);
+        return {
+          customer: new Customer(customer),
+          success: true,
+        };
+      } catch (err) {
+        console.error(err);
+        return {
+          customer: null,
+          success: false,
+        };
+      }
+    },
+    updateInventory: async (
+      obj: any,
+      { args }: { args: UpdateInventoryArgs },
+    ): Promise<InventoryReturn> => {
+      try {
+        const inventory = await updateInventory(args);
+        return {
+          inventory: new Inventory(inventory),
+          success: true,
+        };
+      } catch (err) {
+        console.error(err);
+        return {
+          inventory: null,
           success: false,
         };
       }
@@ -176,5 +250,15 @@ interface InvoiceReturn {
 
 interface InvoiceItemReturn {
   invoiceItem: InvoiceItem | null;
+  success: boolean;
+}
+
+interface CustomerReturn {
+  customer: Customer | null;
+  success: boolean;
+}
+
+interface InventoryReturn {
+  inventory: Inventory | null;
   success: boolean;
 }

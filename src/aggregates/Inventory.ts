@@ -24,4 +24,24 @@ export class Inventory {
       itemDescription: this._itemDescription,
     };
   }
+
+  public updateInventory(args: {
+    itemNumber: string | null;
+    make: string | null;
+    msrp: number | null;
+    itemDescription: string | null;
+  }): void {
+    if (args.itemNumber !== undefined) {
+      this._itemNumber = args.itemNumber;
+    }
+    if (args.make !== undefined) {
+      this._make = args.make;
+    }
+    if (args.msrp !== undefined) {
+      this._msrp = args.msrp;
+    }
+    if (args.itemDescription !== undefined) {
+      this._itemDescription = args.itemDescription;
+    }
+  }
 }

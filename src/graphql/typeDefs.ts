@@ -15,7 +15,7 @@ const typeDefs = gql`
     itemNumber: String #done
     make: String #done
     msrp: Float #done
-    description: String #done
+    itemDescription: String #done
   }
 
   type InvoiceItem {
@@ -67,7 +67,7 @@ const typeDefs = gql`
     itemNumber: String
     make: String
     msrp: Float
-    description: String
+    itemDescription: String
   }
 
   input UpdateInventoryArgs {
@@ -75,7 +75,7 @@ const typeDefs = gql`
     itemNumber: String
     make: String
     msrp: Float
-    description: String
+    itemDescription: String
   }
 
   type InventoryReturn {
