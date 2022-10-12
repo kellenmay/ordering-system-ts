@@ -1,16 +1,16 @@
 import { connection } from '../database';
-import { CustomerRepo } from '../repos';
-export async function deleteCustomer(id) {
+import { InventoryRepo } from '../repos';
+export async function deleteInventory(id) {
     try {
         await connection.beginTransaction();
-        const repo = new CustomerRepo(connection);
-        await repo.deleteCustomer(id);
+        const repo = new InventoryRepo(connection);
+        await repo.deleteInventory(id);
         await connection.commit();
         await connection.release();
     }
     catch (err) {
         await connection.rollback();
         await connection.destroy();
-        throw Error(`Error deleting customer: ${err}`);
+        throw Error(`Error deleting inventory: ${err}`);
     }
 }

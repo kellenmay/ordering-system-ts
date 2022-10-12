@@ -70,4 +70,18 @@ export class InvoiceRepo {
             await this._connection.query(stmt);
         }
     }
+    async getInvoiceId() {
+        const [res] = await this._connection.query(`INSERT INTO invoice (customer_id, date_of_sale) VALUES (NULL, NULL);`);
+        const insertId = res.insertId;
+        return insertId.toString();
+    }
+    async deleteInvoice(id) {
+        await this._connection.query(`
+      SET @invoiceId = ?;
+
+      DELETE FROM invoice WHERE id = @invoiceId;
+    
+      DELETE FROM invoice_item WHERE invoice_item.invoice_number = @invoiceId;
+    `, [id]);
+    }
 }

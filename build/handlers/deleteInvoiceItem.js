@@ -14,6 +14,6 @@ export async function deleteInvoiceItem(args) {
     catch (err) {
         await connection.rollback();
         await connection.destroy();
-        throw Error(`Error creating invoice item: ${err}`);
+        throw Error(`Error deleting invoice item: ${err}`);
     }
 }

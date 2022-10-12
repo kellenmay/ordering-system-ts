@@ -1,4 +1,3 @@
-import type { InvoiceItemDTO } from '../../repos';
 import { InventoryRepo, InvoiceRepo } from '../../repos';
 import type { Context } from '../../utils';
 import { Inventory } from './inventory';
@@ -10,7 +9,7 @@ export class InvoiceItem {
   private _quantity: number | null;
   private _price: number | null;
 
-  constructor(args: InvoiceItemDTO) {
+  constructor(args: InvoiceItemConstructorArgs) {
     this._invoiceNumber = args.invoiceNumber;
     this._lineNumber = args.lineNumber;
     this._itemId = args.itemId;
@@ -66,4 +65,12 @@ export class InvoiceItem {
   public get price() {
     return this._price;
   }
+}
+
+interface InvoiceItemConstructorArgs {
+  invoiceNumber: string;
+  lineNumber: string | null;
+  itemId: string | null;
+  quantity: number | null;
+  price: number | null;
 }

@@ -1,5 +1,5 @@
 import { formatISO9075 } from 'date-fns';
-import { Connection, format, RowDataPacket } from 'mysql2/promise';
+import { Connection, format, OkPacket, RowDataPacket } from 'mysql2/promise';
 import { Invoice } from '../aggregates';
 
 export class InvoiceRepo {
@@ -94,6 +94,27 @@ export class InvoiceRepo {
 
       await this._connection.query(stmt);
     }
+  }
+
+  public async getInvoiceId(): Promise<string> {
+    const [res] = await this._connection.query<OkPacket>(
+      `INSERT INTO invoice (customer_id, date_of_sale) VALUES (NULL, NULL);`,
+    );
+    const insertId = res.insertId;
+    return insertId.toString();
+  }
+
+  public async deleteInvoice(id: string): Promise<void> {
+    await this._connection.query(
+      `
+      SET @invoiceId = ?;
+
+      DELETE FROM invoice WHERE id = @invoiceId;
+    
+      DELETE FROM invoice_item WHERE invoice_item.invoice_number = @invoiceId;
+    `,
+      [id],
+    );
   }
 }
 

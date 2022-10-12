@@ -23,6 +23,6 @@ export async function deleteInvoiceItem(
     await connection.rollback();
     await connection.destroy();
 
-    throw Error(`Error creating invoice item: ${err}`);
+    throw Error(`Error deleting invoice item: ${err}`);
   }
 }

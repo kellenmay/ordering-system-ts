@@ -26,6 +26,7 @@ export class CustomerRepo {
     };
 
     return new Customer(dto);
+    // make aggregate
   }
 
   public async save(customer: Customer): Promise<void> {
@@ -51,7 +52,6 @@ export class CustomerRepo {
       `INSERT INTO customer (name, email, address, phone_number) VALUES (NULL, NULL, NULL, NULL);`,
     );
     const insertId = res.insertId;
-    console.log({ insertId });
     return insertId.toString();
   }
 

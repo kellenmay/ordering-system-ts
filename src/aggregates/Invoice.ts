@@ -1,4 +1,4 @@
-import type { InvoiceDTO } from '../repos';
+import type { InvoiceDTO, InvoiceItemDTO } from '../repos';
 
 export class Invoice {
   private _id: string;
@@ -10,15 +10,15 @@ export class Invoice {
     this._id = args.id;
     this._customerId = args.customerId;
     this._dateOfSale = args.dateOfSale ? new Date(args.dateOfSale) : null;
-    this._invoiceItems = args.invoiceItems;
+    this._invoiceItems = args.invoiceItems.map((item): InvoiceItem => item);
   }
 
   public getState(): InvoiceDTO {
     return {
       id: this._id,
       customerId: this._customerId,
-      dateOfSale: this._dateOfSale ? this._dateOfSale.toISOString() : null,
-      invoiceItems: this._invoiceItems,
+      dateOfSale: this._dateOfSale?.toISOString() ?? null,
+      invoiceItems: this._invoiceItems.map((item): InvoiceItemDTO => item),
     };
   }
 
@@ -72,15 +72,13 @@ export class Invoice {
     }
   }
 
-  // public createInvoice(args:{
-
-  // }),: void {
-  //   this._invoiceItems.push({
-  //     customerId: this.customerId,
-  //     quantity: args.quantity ?? null,
-  //     price: args.price ?? null,
-  //   });
-  // }
+  public createInvoice(args: {
+    customerId: string | null;
+    dateOfSale: string | null;
+  }): void {
+    this._customerId = args.customerId;
+    this._dateOfSale = args.dateOfSale ? new Date(args.dateOfSale) : null;
+  }
 
   public updateInvoice(args: {
     customerId?: string | null | undefined;

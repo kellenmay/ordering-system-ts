@@ -1,14 +1,14 @@
-import type { CustomerDTO } from '../../repos';
+import type { InvoiceRow } from '../../repos';
 import type { Context } from '../../utils';
-
+import { Invoice } from './invoice';
 export class Customer {
-  private _id: string | null;
+  private _id: string;
   private _name: string | null;
   private _address: string | null;
   private _email: string | null;
   private _phoneNumber: string | null;
 
-  constructor(args: CustomerDTO) {
+  constructor(args: CustomerConstructorArgs) {
     this._id = args.id;
     this._name = args.name;
     this._address = args.address;
@@ -31,19 +31,34 @@ export class Customer {
   public get phoneNumber() {
     return this._phoneNumber;
   }
-  public async invoices(args: unknown, context: Context): Promise<any> {
+  public async invoices(
+    args: unknown,
+    context: Context,
+  ): Promise<Invoice[] | null> {
     try {
-      const [invoice = []] = await context.connection.query<any[]>(
-        'SELECT * FROM invoice WHERE invoice.customer_id = ?;',
-        [this._id],
+      const [rows] = await context.connection.query<InvoiceRow[]>(
+        `SELECT * FROM invoice WHERE invoice.customer_id = ?;`,
+        [this.id],
       );
-
-      return invoice.map((row) => ({
-        id: `"Invoice " + ${row.id}` ?? null,
-      }));
-    } catch (err) {
-      console.error(err);
+      return rows.map(
+        (row) =>
+          new Invoice({
+            id: row.id.toString(),
+            customerId: row.customer_id?.toString() ?? null,
+            dateOfSale: row.date_of_sale ?? null,
+          }),
+      );
+    } catch (error) {
+      console.error(error);
       return [];
     }
   }
+}
+
+interface CustomerConstructorArgs {
+  id: string;
+  name: string | null;
+  address: string | null;
+  email: string | null;
+  phoneNumber: string | null;
 }

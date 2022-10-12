@@ -6,6 +6,7 @@ export async function createInvoice(args) {
         const repo = new InvoiceRepo(connection);
         const invoice = await repo.getInvoiceId();
         const invoiceId = await repo.get(invoice);
+        console.log(invoiceId);
         invoiceId.createInvoice({
             customerId: args.customerId ?? null,
             dateOfSale: args.dateOfSale ?? null,
@@ -13,6 +14,7 @@ export async function createInvoice(args) {
         await repo.save(invoiceId);
         await connection.commit();
         const createdInvoice = invoiceId.getState();
+        console.log(createdInvoice);
         if (!createdInvoice) {
             throw new Error('No new invoice created');
         }
@@ -22,6 +24,6 @@ export async function createInvoice(args) {
     catch (err) {
         await connection.rollback();
         await connection.destroy();
-        throw Error(`Error creating invoice: ${err}`);
+        throw Error(`Error updating invoice: ${err}`);
     }
 }

@@ -1,5 +1,3 @@
-import type { InventoryDTO } from '../../repos';
-
 export class Inventory {
   private _id: string;
   private _itemNumber: string | null;
@@ -7,7 +5,7 @@ export class Inventory {
   private _msrp: number | null;
   private _itemDescription: string | null;
 
-  constructor(args: InventoryDTO) {
+  constructor(args: InventoryConstructorArgs) {
     this._id = args.id;
     this._itemNumber = args.itemNumber;
     this._make = args.make;
@@ -30,4 +28,12 @@ export class Inventory {
   public get itemDescription() {
     return this._itemDescription;
   }
+}
+
+interface InventoryConstructorArgs {
+  id: string;
+  itemNumber: string | null;
+  make: string | null;
+  msrp: number | null;
+  itemDescription: string | null;
 }

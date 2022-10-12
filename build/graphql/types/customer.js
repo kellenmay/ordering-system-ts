@@ -1,3 +1,4 @@
+import { Invoice } from './invoice';
 export class Customer {
     _id;
     _name;
@@ -28,13 +29,15 @@ export class Customer {
     }
     async invoices(args, context) {
         try {
-            const [invoice = []] = await context.connection.query('SELECT * FROM invoice WHERE invoice.customer_id = ?;', [this._id]);
-            return invoice.map((row) => ({
-                id: `"Invoice " + ${row.id}` ?? null,
+            const [rows] = await context.connection.query(`SELECT * FROM invoice WHERE invoice.customer_id = ?;`, [this.id]);
+            return rows.map((row) => new Invoice({
+                id: row.id.toString(),
+                customerId: row.customer_id?.toString() ?? null,
+                dateOfSale: row.date_of_sale ?? null,
             }));
         }
-        catch (err) {
-            console.error(err);
+        catch (error) {
+            console.error(error);
             return [];
         }
     }

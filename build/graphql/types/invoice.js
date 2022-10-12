@@ -1,5 +1,6 @@
-import { CustomerRepo } from '../../repos';
+import { CustomerRepo, InvoiceRepo } from '../../repos';
 import { Customer } from './customer';
+import { InvoiceItem } from './invoice_item';
 export class Invoice {
     _id;
     _customerId;
@@ -30,16 +31,12 @@ export class Invoice {
     get dateOfSale() {
         return this._dateOfSale;
     }
-    // REFACTOR TO USE INVOICEITEM CLASS
     async lines(args, context) {
         try {
-            const [invoiceItemRows = []] = await context.connection.query('SELECT * FROM invoice_item WHERE invoice_item.invoice_number = ?;', [this._id]);
-            return invoiceItemRows.map((row) => ({
-                id: `"Invoice Number" + ${row.invoice_number}|"Line number" + ${row.line_number}` ??
-                    null,
-                quantity: row.quantity ?? null,
-                price: row.price ?? null,
-            }));
+            const repo = new InvoiceRepo(context.connection);
+            const invoice = await repo.get(this._id);
+            const dto = invoice.getState();
+            return dto.invoiceItems.map((item) => new InvoiceItem(item));
         }
         catch (err) {
             console.error(err);

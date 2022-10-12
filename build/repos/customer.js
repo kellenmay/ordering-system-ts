@@ -35,7 +35,6 @@ export class CustomerRepo {
     async getCustomerId() {
         const [res] = await this._connection.query(`INSERT INTO customer (name, email, address, phone_number) VALUES (NULL, NULL, NULL, NULL);`);
         const insertId = res.insertId;
-        console.log({ insertId });
         return insertId.toString();
     }
     async deleteCustomer(id) {

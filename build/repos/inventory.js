@@ -32,4 +32,12 @@ export class InventoryRepo {
     `, [dto.id, dto.itemNumber, dto.make, dto.msrp, dto.itemDescription]);
         await this._connection.query(stmt);
     }
+    async getInventoryId() {
+        const [res] = await this._connection.query(`INSERT INTO inventory (item_number, make, msrp, item_description) VALUES (NULL, NULL, NULL, NULL);`);
+        const insertId = res.insertId;
+        return insertId.toString();
+    }
+    async deleteInventory(id) {
+        await this._connection.query(`DELETE FROM inventory WHERE id = ?;`, [id]);
+    }
 }

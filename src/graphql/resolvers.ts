@@ -1,28 +1,23 @@
 import {
-  CustomerRow,
-  getCustomer,
-  getCustomers,
-  getInventories,
-  getInventory,
-  getInvoices,
-  InventoryRow,
-  InvoiceRow,
-} from '../utils';
-
-import {
   createCustomer,
+  createInventory,
+  createInvoice,
   createInvoiceItem,
   deleteCustomer,
+  deleteInventory,
+  deleteInvoice,
   deleteInvoiceItem,
   updateCustomer,
   updateInventory,
   updateInvoice,
   updateInvoiceItem,
 } from '../handlers';
-import { InvoiceRepo } from '../repos';
+import type { CustomerRow, InventoryRow, InvoiceRow } from '../repos';
 import type {
   Context,
   CreateCustomerArgs,
+  CreateInventoryArgs,
+  CreateInvoiceArgs,
   CreateInvoiceItemArgs,
   DeleteInvoiceItemArgs,
   UpdateCustomerArgs,
@@ -34,10 +29,26 @@ import { Customer, Inventory, Invoice, InvoiceItem } from './types';
 
 const resolvers = {
   Query: {
-    customers: async (): Promise<CustomerRow[]> => {
+    customers: async (
+      obj: unknown,
+      args: unknown,
+      context: Context,
+    ): Promise<Customer[]> => {
       try {
-        const customers = await getCustomers();
-        return customers;
+        const [rows] = await context.connection.query<CustomerRow[]>(
+          `SELECT * FROM customer;`,
+        );
+
+        return rows.map(
+          (row) =>
+            new Customer({
+              id: row.id.toString(),
+              name: row.name,
+              address: row.address,
+              email: row.email,
+              phoneNumber: row.phone_number,
+            }),
+        );
       } catch (error) {
         console.error(error);
         return [];
@@ -46,19 +57,49 @@ const resolvers = {
     customer: async (
       obj: any,
       args: { id: string },
-    ): Promise<CustomerRow | null> => {
+      context: Context,
+    ): Promise<Customer | null> => {
       try {
-        const customer = await getCustomer(args.id);
-        return customer;
+        const [[row]] = await context.connection.query<CustomerRow[]>(
+          `SELECT * FROM customer WHERE id = ?;`,
+          [args.id],
+        );
+
+        if (row) {
+          return new Customer({
+            id: row.id.toString(),
+            name: row.name,
+            address: row.address,
+            email: row.email,
+            phoneNumber: row.phone_number,
+          });
+        }
+        return null;
       } catch (error) {
         console.error(error);
         return null;
       }
     },
-    inventories: async (): Promise<InventoryRow[]> => {
+    inventories: async (
+      obj: any,
+      args: { id: string },
+      context: Context,
+    ): Promise<Inventory[]> => {
       try {
-        const inventories = await getInventories();
-        return inventories;
+        const [rows] = await context.connection.query<InventoryRow[]>(
+          `SELECT * FROM inventory;`,
+        );
+
+        return rows.map(
+          (row) =>
+            new Inventory({
+              id: row.id.toString(),
+              itemNumber: row.item_number,
+              make: row.make,
+              msrp: row.msrp,
+              itemDescription: row.item_description,
+            }),
+        );
       } catch (error) {
         console.error(error);
         return [];
@@ -67,19 +108,47 @@ const resolvers = {
     inventory: async (
       obj: any,
       args: { id: string },
-    ): Promise<InventoryRow | null> => {
+      context: Context,
+    ): Promise<Inventory | null> => {
       try {
-        const inventory = await getInventory(args.id);
-        return inventory;
+        const [[row]] = await context.connection.query<InventoryRow[]>(
+          `SELECT * FROM inventory WHERE id = ?;`,
+          [args.id],
+        );
+
+        if (row) {
+          return new Inventory({
+            id: row.id.toString(),
+            itemNumber: row.item_number,
+            make: row.make,
+            msrp: row.msrp,
+            itemDescription: row.item_description,
+          });
+        }
+        return null;
       } catch (error) {
         console.error(error);
         return null;
       }
     },
-    invoices: async (): Promise<InvoiceRow[]> => {
+    invoices: async (
+      obj: any,
+      args: { id: string },
+      context: Context,
+    ): Promise<Invoice[]> => {
       try {
-        const invoices = await getInvoices();
-        return invoices;
+        const [rows] = await context.connection.query<InvoiceRow[]>(
+          `SELECT * FROM invoice;`,
+        );
+
+        return rows.map(
+          (row) =>
+            new Invoice({
+              id: row.id.toString(),
+              customerId: row.customer_id?.toString() ?? null,
+              dateOfSale: row.date_of_sale,
+            }),
+        );
       } catch (error) {
         console.error(error);
         return [];
@@ -91,10 +160,19 @@ const resolvers = {
       context: Context,
     ): Promise<Invoice | null> => {
       try {
-        const repo = new InvoiceRepo(context.connection);
-        const invoice = await repo.get(args.id);
-        const state = invoice.getState();
-        return new Invoice(state);
+        const [[row]] = await context.connection.query<InvoiceRow[]>(
+          `SELECT * FROM invoice WHERE id = ?;`,
+          [args.id],
+        );
+
+        if (row) {
+          return new Invoice({
+            id: row.id.toString(),
+            customerId: row.customer_id?.toString() ?? null,
+            dateOfSale: row.date_of_sale,
+          });
+        }
+        return null;
       } catch (error) {
         console.error(error);
         return null;
@@ -206,6 +284,36 @@ const resolvers = {
         };
       }
     },
+    deleteInventory: async (
+      obj: any,
+      args: { id: string },
+    ): Promise<boolean> => {
+      try {
+        await deleteInventory(args.id);
+        return true;
+      } catch (err) {
+        console.error(err);
+        return false;
+      }
+    },
+    createInventory: async (
+      obj: any,
+      { args }: { args: CreateInventoryArgs },
+    ): Promise<InventoryReturn> => {
+      try {
+        const inventory = await createInventory(args);
+        return {
+          inventory: new Inventory(inventory),
+          success: true,
+        };
+      } catch (err) {
+        console.error(err);
+        return {
+          inventory: null,
+          success: false,
+        };
+      }
+    },
     deleteInvoiceItem: async (
       obj: any,
       args: DeleteInvoiceItemArgs,
@@ -236,6 +344,34 @@ const resolvers = {
           invoice: null,
           success: false,
         };
+      }
+    },
+    createInvoice: async (
+      obj: any,
+      { args }: { args: CreateInvoiceArgs },
+    ): Promise<InvoiceReturn> => {
+      try {
+        const invoice = await createInvoice(args);
+
+        return {
+          invoice: new Invoice(invoice),
+          success: true,
+        };
+      } catch (err) {
+        console.error(err);
+        return {
+          invoice: null,
+          success: false,
+        };
+      }
+    },
+    deleteInvoice: async (obj: any, args: { id: string }): Promise<boolean> => {
+      try {
+        await deleteInvoice(args.id);
+        return true;
+      } catch (err) {
+        console.error(err);
+        return false;
       }
     },
   },

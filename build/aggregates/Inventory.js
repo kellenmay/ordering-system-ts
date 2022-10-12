@@ -20,6 +20,12 @@ export class Inventory {
             itemDescription: this._itemDescription,
         };
     }
+    createInventory(args) {
+        this._itemNumber = args.itemNumber;
+        this._make = args.make;
+        this._msrp = args.msrp;
+        this._itemDescription = args.itemDescription;
+    }
     updateInventory(args) {
         if (args.itemNumber !== undefined) {
             this._itemNumber = args.itemNumber;

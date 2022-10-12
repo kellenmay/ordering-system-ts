@@ -35,6 +35,6 @@ export async function updateCustomer(
     await connection.rollback();
     await connection.destroy();
 
-    throw Error(`Error updating customer item: ${err}`);
+    throw Error(`Error updating customer: ${err}`);
   }
 }

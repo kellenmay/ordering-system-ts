@@ -6,7 +6,6 @@ export async function createCustomer(args) {
         const repo = new CustomerRepo(connection);
         const customerId = await repo.getCustomerId();
         const customer = await repo.get(customerId);
-        console.log(customer);
         customer.createCustomer({
             name: args.name,
             email: args.email,
@@ -16,7 +15,6 @@ export async function createCustomer(args) {
         await repo.save(customer);
         await connection.commit();
         const createdCustomer = customer.getState();
-        console.log(createdCustomer);
         if (!createdCustomer) {
             throw new Error('No new line created');
         }
@@ -26,6 +24,6 @@ export async function createCustomer(args) {
     catch (err) {
         await connection.rollback();
         await connection.destroy();
-        throw Error(`Error updating customer item: ${err}`);
+        throw Error(`Error creating customer ${err}`);
     }
 }

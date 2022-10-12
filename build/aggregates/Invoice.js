@@ -7,14 +7,14 @@ export class Invoice {
         this._id = args.id;
         this._customerId = args.customerId;
         this._dateOfSale = args.dateOfSale ? new Date(args.dateOfSale) : null;
-        this._invoiceItems = args.invoiceItems;
+        this._invoiceItems = args.invoiceItems.map((item) => item);
     }
     getState() {
         return {
             id: this._id,
             customerId: this._customerId,
-            dateOfSale: this._dateOfSale ? this._dateOfSale.toISOString() : null,
-            invoiceItems: this._invoiceItems,
+            dateOfSale: this._dateOfSale?.toISOString() ?? null,
+            invoiceItems: this._invoiceItems.map((item) => item),
         };
     }
     createInvoiceItem(args) {
@@ -45,14 +45,10 @@ export class Invoice {
             invoiceItem.price = args.price;
         }
     }
-    // public createInvoice(args:{
-    // }),: void {
-    //   this._invoiceItems.push({
-    //     customerId: this.customerId,
-    //     quantity: args.quantity ?? null,
-    //     price: args.price ?? null,
-    //   });
-    // }
+    createInvoice(args) {
+        this._customerId = args.customerId;
+        this._dateOfSale = args.dateOfSale ? new Date(args.dateOfSale) : null;
+    }
     updateInvoice(args) {
         if (args.customerId !== undefined) {
             this._customerId = args.customerId;

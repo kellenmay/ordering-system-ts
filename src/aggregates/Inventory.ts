@@ -25,6 +25,18 @@ export class Inventory {
     };
   }
 
+  public createInventory(args: {
+    itemNumber: string | null;
+    make: string | null;
+    msrp: number | null;
+    itemDescription: string | null;
+  }): void {
+    this._itemNumber = args.itemNumber;
+    this._make = args.make;
+    this._msrp = args.msrp;
+    this._itemDescription = args.itemDescription;
+  }
+
   public updateInventory(args: {
     itemNumber: string | null;
     make: string | null;
